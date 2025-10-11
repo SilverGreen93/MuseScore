@@ -834,12 +834,83 @@ String Note::tpcUserName(int tpc, int pitch, bool explicitAccidental, bool full)
         pitchStr.replace(u"#", u"♯");
     }
 
-    pitchStr = muse::mtrc("global", pitchStr);
+    // Find and reduce accidentals
+    char16_t accidentalChar = 0;
+    int accidentalCount = 0;
 
+    for (int i = 0; i < pitchStr.size(); ++i) {
+        // parse string and count accidentals
+        const auto ch = pitchStr.mid(i, 1);
+
+        if (ch == u"♯" || ch == u"♭") {
+            if (accidentalChar == 0) {
+                accidentalChar = ch[0];
+                accidentalCount = 1;
+            } else if (ch[0] == accidentalChar) {
+                // remove any repeated identical accidentals
+                pitchStr.remove(i, 1);
+                --i;
+                ++accidentalCount;
+            }
+        }
+    }
+
+    // Compute the octave
     const String octaveStr = String::number(((pitch - static_cast<int>(tpc2alter(tpc))) / PITCH_DELTA_OCTAVE) - 1);
 
-    return pitchStr + (explicitAccidental ? u" " : u"") + octaveStr;
+    // Debug info
+    qWarning() << "Note::tpcUserName: tpc =" << tpc
+               << ", pitch =" << pitch
+               << ", pitchStr(before translation) =" << pitchStr
+               << ", accidentalChar =" << String(accidentalChar)
+               << ", accidentalCount =" << accidentalCount
+               << ", octaveStr =" << octaveStr;
+
+    // Translate the string using a maximum of one accidental
+    String translated = muse::mtrc("EditPitchBase", pitchStr + u" " + octaveStr);
+
+    qWarning() << "Note::tpcUserName: translated(after translation) =" << translated;
+
+    // Reinsert removed accidentals using the localised accidental character
+    if (accidentalChar && accidentalCount > 1) {
+        String altCharStr;
+
+        if (accidentalChar == u'♯') {
+            //: ♯ is the musical sharp symbol as expected in a pitch name string, e.g. C♯ 4
+            altCharStr = QT_TRANSLATE_NOOP("global/pitchAccidental", "♯");
+        } else if (accidentalChar == u'♭') {
+            //: ♭ is the musical flat symbol as expected in a pitch name string, e.g. B♭ 4
+            altCharStr = QT_TRANSLATE_NOOP("global/pitchAccidental", "♭");
+        }
+
+        int idx = translated.indexOf(altCharStr);
+        if (idx != -1) {
+            String extras;
+            for (int j = 0; j < accidentalCount - 1; ++j)
+                extras += altCharStr;
+            translated.insert(idx + altCharStr.size(), extras);
+        } else {
+            // special case for B♭ = B localization
+            // applies only for Heses and Heseses
+            if (translated.toLower()[0] == 'b' && accidentalChar == u'♭' && muse::mtrc("global/noteName", "B♭") == "B") {
+                if (translated[0] == 'b') {
+                    translated[0] = 'h';
+                } else if (translated[0] == 'B') {
+                    translated[0] = 'H';
+                }
+                String extras;
+                for (int j = 0; j < accidentalCount; ++j)
+                    extras += altCharStr;
+                translated.insert(1, extras);
+            }
+        }
+    }
+
+    qWarning() << "Note::tpcUserName: translated(with all accidentals) =" << translated;
+
+    return translated;
 }
+
 
 //---------------------------------------------------------
 //   tpcUserName
@@ -874,6 +945,9 @@ String Note::tpcUserName(const bool explicitAccidental, bool full) const
         String soundingPitch = tpcUserName(tpc1(), ppitch(), explicitAccidental);
         return muse::mtrc("engraving", "%1 (sounding as %2%3)").arg(pitchName, soundingPitch, pitchOffset);
     }
+
+    qWarning() << "Note::tpcUserName: pitchName =" << pitchName << ", pitchOffset =" << pitchOffset;
+
     return pitchName + pitchOffset;
 }
 
