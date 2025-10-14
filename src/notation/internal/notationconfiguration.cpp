@@ -53,6 +53,7 @@ static const Settings::Key NOTE_INPUT_PREVIEW_COLOR(module_name, "ui/canvas/note
 
 static const Settings::Key USE_NOTE_INPUT_CURSOR_IN_INPUT_BY_DURATION(module_name,
                                                                       "ui/canvas/useNoteInputCursorInInputByDuration");
+static const Settings::Key PITCH_NOTATION_SPN(module_name, "ui/canvas/pitchNotationSPN");
 
 static const Settings::Key THIN_NOTE_INPUT_CURSOR(module_name, "ui/canvas/thinNoteInputCursor");
 
@@ -187,6 +188,11 @@ void NotationConfiguration::init()
     settings()->setDefaultValue(USE_NOTE_INPUT_CURSOR_IN_INPUT_BY_DURATION, Val(false));
     settings()->valueChanged(USE_NOTE_INPUT_CURSOR_IN_INPUT_BY_DURATION).onReceive(nullptr, [this](const Val&) {
         m_useNoteInputCursorInInputByDurationChanged.notify();
+    });
+
+    settings()->setDefaultValue(PITCH_NOTATION_SPN, Val(false));
+    settings()->valueChanged(PITCH_NOTATION_SPN).onReceive(nullptr, [this](const Val&) {
+        m_pitchNotationSPNChanged.notify();
     });
 
     settings()->setDefaultValue(THIN_NOTE_INPUT_CURSOR, Val(false)); // accessible via DevTools/Settings
@@ -649,6 +655,21 @@ void NotationConfiguration::setUseNoteInputCursorInInputByDuration(bool use)
 muse::async::Notification NotationConfiguration::useNoteInputCursorInInputByDurationChanged() const
 {
     return m_useNoteInputCursorInInputByDurationChanged;
+}
+
+bool NotationConfiguration::pitchNotationSPN() const
+{
+    return settings()->value(PITCH_NOTATION_SPN).toBool();
+}
+
+void NotationConfiguration::setPitchNotationSPN(bool use)
+{
+    settings()->setSharedValue(PITCH_NOTATION_SPN, Val(use));
+}
+
+muse::async::Notification NotationConfiguration::pitchNotationSPNChanged() const
+{
+    return m_pitchNotationSPNChanged;
 }
 
 int NotationConfiguration::selectionProximity() const

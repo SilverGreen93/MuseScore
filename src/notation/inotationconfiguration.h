@@ -92,6 +92,10 @@ public:
     virtual void setUseNoteInputCursorInInputByDuration(bool use) = 0;
     virtual muse::async::Notification useNoteInputCursorInInputByDurationChanged() const = 0;
 
+    virtual bool pitchNotationSPN() const = 0;
+    virtual void setPitchNotationSPN(bool use) = 0;
+    virtual muse::async::Notification pitchNotationSPNChanged() const = 0;
+
     virtual int selectionProximity() const = 0;
     virtual void setSelectionProximity(int proximity) = 0;
     virtual muse::async::Channel<int> selectionProximityChanged() const = 0;

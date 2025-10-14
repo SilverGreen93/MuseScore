@@ -25,7 +25,7 @@
 
 #include "ui_editstringdata.h"
 #include "engraving/dom/stringdata.h"
-
+#include "notation/inotationconfiguration.h"
 #include "modularity/ioc.h"
 #include "context/iglobalcontext.h"
 
@@ -39,6 +39,7 @@ class EditStringData : public QDialog, private Ui::EditStringDataBase, public mu
     Q_OBJECT
 
     muse::Inject<context::IGlobalContext> globalContext = { this };
+    muse::Inject<INotationConfiguration> notationConfiguration = { this };
 
 public:
     EditStringData(QWidget* parent = nullptr, const std::vector<engraving::instrString>& strings = {}, int frets = 0);

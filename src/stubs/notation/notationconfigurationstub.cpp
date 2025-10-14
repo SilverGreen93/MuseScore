@@ -190,6 +190,21 @@ muse::async::Notification NotationConfigurationStub::useNoteInputCursorInInputBy
     return n;
 }
 
+bool NotationConfigurationStub::pitchNotationSPN() const
+{
+    return false;
+}
+
+void NotationConfigurationStub::setPitchNotationSPN(bool)
+{
+}
+
+muse::async::Notification NotationConfigurationStub::pitchNotationSPNChanged() const
+{
+    static muse::async::Notification n;
+    return n;
+}
+
 int NotationConfigurationStub::selectionProximity() const
 {
     return 1;

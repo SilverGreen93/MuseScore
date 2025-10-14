@@ -33,6 +33,7 @@
 #include "context/iglobalcontext.h"
 #include "global/iinteractive.h"
 #include "engraving/iengravingconfiguration.h"
+#include "notation/inotationconfiguration.h"
 #include "iselectinstrumentscenario.h"
 
 namespace mu::notation {
@@ -46,6 +47,7 @@ class EditStaff : public QDialog, private Ui::EditStaffBase, public muse::Inject
     muse::Inject<muse::IInteractive> interactive = { this };
     muse::Inject<ISelectInstrumentsScenario> selectInstrumentsScenario = { this };
     muse::Inject<engraving::IEngravingConfiguration> engravingConfiguration = { this };
+    muse::Inject<INotationConfiguration> notationConfiguration = { this };
 
 public:
     EditStaff(QWidget* parent = nullptr);

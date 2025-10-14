@@ -96,6 +96,10 @@ public:
     void setUseNoteInputCursorInInputByDuration(bool use) override;
     muse::async::Notification useNoteInputCursorInInputByDurationChanged() const override;
 
+    bool pitchNotationSPN() const override;
+    void setPitchNotationSPN(bool use) override;
+    muse::async::Notification pitchNotationSPNChanged() const override;
+
     int selectionProximity() const override;
     void setSelectionProximity(int proximity) override;
     muse::async::Channel<int> selectionProximityChanged() const override;
@@ -296,6 +300,7 @@ private:
     muse::async::Notification m_defaultNoteInputMethodChanged;
     muse::async::Notification m_addAccidentalDotsArticulationsToNextNoteEnteredChanged;
     muse::async::Notification m_useNoteInputCursorInInputByDurationChanged;
+    muse::async::Notification m_pitchNotationSPNChanged;
     muse::async::Notification m_isMidiInputEnabledChanged;
     muse::async::Notification m_startNoteInputAtSelectedNoteRestWhenPressingMidiKeyChanged;
 

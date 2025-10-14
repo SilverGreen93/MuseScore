@@ -335,5 +335,9 @@ void EditStringData::accept()
 
 QString EditStringData::midiCodeToStr(int midiCode)
 {
-    return QString::fromStdString(muse::pitchToString(midiCode));
+    if (notationConfiguration()->pitchNotationSPN()) {
+        return QString::fromStdString(muse::pitchToString(midiCode, true));
+    } else {
+        return QString::fromStdString(muse::pitchToString(midiCode, false));
+    }
 }

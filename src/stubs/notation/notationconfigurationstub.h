@@ -84,6 +84,10 @@ public:
     void setUseNoteInputCursorInInputByDuration(bool use) override;
     muse::async::Notification useNoteInputCursorInInputByDurationChanged() const override;
 
+    bool pitchNotationSPN() const override;
+    void setPitchNotationSPN(bool use) override;
+    muse::async::Notification pitchNotationSPNChanged() const override;
+
     int selectionProximity() const override;
     void setSelectionProximity(int proximity)  override;
     muse::async::Channel<int> selectionProximityChanged() const override;
